@@ -17,12 +17,19 @@ import io.quarkus.test.junit.QuarkusTest;
 public class ServiceFruitTest {
 
     @Inject
+    RepositoryFruit repo;
+
+    @Inject
     ServiceFruit service;
 
     // @Test de jupiter, no el de junit
     @Test
-    public void testList() {
+    public void testOrderedList() {
         Assertions.assertThat(service.list()).hasSize(2);
+        Assertions.assertThat(service.list()).element(0)
+                                             .hasFieldOrPropertyWithValue("name", "Apple");
+        Assertions.assertThat(service.list()).element(1)
+                                             .hasFieldOrPropertyWithValue("name", "Pineapple");
     }
 
     @Test
@@ -36,10 +43,9 @@ public class ServiceFruitTest {
         Assertions.assertThat(service.list()).hasSize(3);
         Assertions.assertThat(service.list().stream().anyMatch(f -> f.getName().equals("Banana"))).isTrue();
 
-        // handmade rollback gracias al antipatron ActiveRecord ;)
-        Fruit fruit = Fruit.find("name", "Banana").firstResult();
-        fruit.delete();
-        Assertions.assertThat(Fruit.count()).isEqualTo(2);
+        // handmade rollback, @transactional doesn't work in QuarkusTest
+        repo.delete("name", "Banana");
+        Assertions.assertThat(repo.count()).isEqualTo(2);
     }
     @Test
     public void removeTest(){
@@ -47,9 +53,9 @@ public class ServiceFruitTest {
         Assertions.assertThat(service.list()).hasSize(1);
         Assertions.assertThat(service.list().stream().anyMatch(f -> f.getName().equals("Apple"))).isFalse();
 
-        // handmade rollback gracias al antipatron ActiveRecord ;)
-        Fruit.persist(new Fruit("Apple", "Winter fruit"));
-        Assertions.assertThat(Fruit.count()).isEqualTo(2);
+        // handmade rollback, @transactional doesn't work in QuarkusTest
+        repo.persist(new Fruit("Apple", "Winter fruit"));
+        Assertions.assertThat(repo.count()).isEqualTo(2);
     }
 
     @Test

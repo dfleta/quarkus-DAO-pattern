@@ -310,8 +310,11 @@ y luego:
 $ mvn test  
 => compila con el perfil test
 
-$ mvn clean compile quarkus:Dev -Dquarkus.profile=dev   
+$ mvn clean compile quarkus:Dev -Dquarkus.profile=dev
 => compila el perfil dev
+
+# evitar compilar los test
+$ mvn clean compile quarkus:Dev -Dquarkus.profile=dev -Dmaven.test.skip=true 
 
 $ mvn package -Dmaven.test.skip=true 
 compila el perfil prod

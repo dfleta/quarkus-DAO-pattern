@@ -1,7 +1,7 @@
 package org.pingpong.restjson;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import javax.inject.Inject;
 import javax.transaction.Transactional;
@@ -51,7 +51,7 @@ public class ResourceFruit {
     // resteasy jackson desactiva la negociación
     // y sirve MediaType.APPLICATION_JSON
     // curl -w "\n" http://localhost:8080/fruits/ -H "Content-Type: application/json"
-    public Set<Fruit> list() {
+    public List<Fruit> list() {
         return service.list();
     }
 
@@ -61,7 +61,7 @@ public class ResourceFruit {
     @Transactional
     // curl -d '{"name":"Banana", "description":"Brings a Gorilla too"}'
     // -H "Content-Type: application/json" -X POST http://localhost:8080/fruits
-    public Set<Fruit> add(@Valid Fruit fruit) {
+    public List<Fruit> add(@Valid Fruit fruit) {
         service.add(fruit);
         return this.list();
     }
@@ -72,7 +72,7 @@ public class ResourceFruit {
     @Transactional
     // curl -d '{"name":"Banana", "description":"Brings a Gorilla too"}'
     // -H "Content-Type: application/json" -X DELETE http://localhost:8080/fruits   
-    public Set<Fruit> delete(@Valid Fruit fruit) {
+    public List<Fruit> delete(@Valid Fruit fruit) {
         service.remove(fruit.getName());
         return list();
     }
