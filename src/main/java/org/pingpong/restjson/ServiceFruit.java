@@ -1,40 +1,36 @@
 package org.pingpong.restjson;
 
+import java.util.List;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import javax.enterprise.context.ApplicationScoped;
+import javax.inject.Inject;
 
 @ApplicationScoped
 public class ServiceFruit {
 
-    // @Inject
-    // RepoFruit repo;
+    @Inject
+    RepositoryFruit repo;
 
     public ServiceFruit() { 
         // CDI
     }
 
-    public Set<Fruit> list() {
-        // stream requiere una transaction
-        Stream<Fruit> fruits = Fruit.streamAll();
-        return fruits.collect(Collectors.toSet());
+    public List<Fruit> list() {
+        return repo.listAllOrderedByName();
     }
 
     public void add(Fruit fruit) {
-        fruit.persist();
+        repo.persist(fruit);
     }
 
     public void remove(String name) {
-        Fruit fruit = Fruit.find("name", name).firstResult();
-        fruit.delete();
+        repo.deleteByName(name);
     }
 
     public Optional<Fruit> getFruit(String name) {
         return name.isBlank()? 
             Optional.ofNullable(null) : 
-            Fruit.find("name", name).firstResultOptional();
+            repo.findByNameOptional(name);
     }
 }
